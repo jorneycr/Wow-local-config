@@ -1,0 +1,31 @@
+# Configuración local y secretos
+.env
+.claude/
+
+# Código clonado de AzerothCore
+azerothcore/
+
+# Datos extraídos del cliente y archivos generados
+data/
+logs/
+
+# Volúmenes y archivos temporales
+*.zip
+*.7z
+*.tar
+*.tar.gz
+
+# Sistema operativo y editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Archivos compilados
+build/
+bin/
+obj/
+CMakeFiles/
+CMakeCache.txt
