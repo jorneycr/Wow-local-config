@@ -23,6 +23,7 @@ async function csrfToken() {
 function App() {
   const [form, setForm] = useState(initialForm);
   const [login, setLogin] = useState({ email: '', password: '' });
+  const [passwordForm, setPasswordForm] = useState({ current: '', next: '', confirmation: '' });
   const [account, setAccount] = useState(null);
   const [characters, setCharacters] = useState([]);
   const [mode, setMode] = useState('login');
@@ -40,6 +41,40 @@ function App() {
 
   const togglePassword = (field) => {
     setVisibleFields((current) => ({ ...current, [field]: !current[field] }));
+  };
+
+  const updatePassword = (event) => {
+    setPasswordForm((current) => ({ ...current, [event.target.name]: event.target.value }));
+  };
+
+  const submitPasswordChange = async (event) => {
+    event.preventDefault();
+    setStatus(null);
+    if (passwordForm.next !== passwordForm.confirmation) {
+      setStatus({ type: 'error', text: 'Las contraseñas nuevas no coinciden.' });
+      return;
+    }
+    setIsSubmitting(true);
+    try {
+      const token = await csrfToken();
+      await apiRequest('/api/password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token },
+        body: JSON.stringify({
+          current_password: passwordForm.current,
+          new_password: passwordForm.next,
+          new_password_confirmation: passwordForm.confirmation,
+        }),
+      });
+      setPasswordForm({ current: '', next: '', confirmation: '' });
+      setAccount(null);
+      setCharacters([]);
+      setStatus({ type: 'success', text: 'Contraseña actualizada. Inicia sesión nuevamente.' });
+    } catch (error) {
+      setStatus({ type: 'error', text: error.message });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const submitLogin = async (event) => {
@@ -153,8 +188,12 @@ function App() {
             )}
             <div className="security-card">
               <p className="eyebrow">Seguridad de la cuenta</p>
-              <div><span>Contraseña</span><strong>••••••••</strong></div>
-              <p className="hint">El cambio de contraseña se habilitará desde esta sección.</p>
+              <form onSubmit={submitPasswordChange} noValidate>
+                <label>Contraseña actual<div className="password-field"><input type={visibleFields.current ? 'text' : 'password'} name="current" value={passwordForm.current} onChange={updatePassword} required /><button className="password-toggle" type="button" onClick={() => togglePassword('current')}>{visibleFields.current ? 'Ocultar' : 'Mostrar'}</button></div></label>
+                <label>Nueva contraseña<div className="password-field"><input type={visibleFields.next ? 'text' : 'password'} name="next" value={passwordForm.next} onChange={updatePassword} minLength="8" maxLength="32" required /><button className="password-toggle" type="button" onClick={() => togglePassword('next')}>{visibleFields.next ? 'Ocultar' : 'Mostrar'}</button></div></label>
+                <label>Confirmar nueva contraseña<div className="password-field"><input type={visibleFields.confirmation ? 'text' : 'password'} name="confirmation" value={passwordForm.confirmation} onChange={updatePassword} minLength="8" maxLength="32" required /><button className="password-toggle" type="button" onClick={() => togglePassword('confirmation')}>{visibleFields.confirmation ? 'Ocultar' : 'Mostrar'}</button></div></label>
+                <button type="submit" disabled={isSubmitting}>{isSubmitting ? 'Actualizando…' : 'Cambiar contraseña'}</button>
+              </form>
             </div>
             <button type="button" onClick={async () => {
               try {

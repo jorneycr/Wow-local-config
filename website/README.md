@@ -265,11 +265,23 @@ Devuelve únicamente `name`, `level`, `race`, `class` y `online` del account ID 
 
 ### Cambio de contraseña
 
-El panel muestra el estado pendiente y este endpoint aún no se habilita. Debe reutilizar la rutina SRP6 validada antes de escribir `salt` y `verifier`:
-
 ```http
 POST /api/password
+Content-Type: application/json
+X-CSRF-Token: <token>
 ```
+
+Cuerpo:
+
+```json
+{
+  "current_password": "PasswordActual",
+  "new_password": "NuevaPassword123",
+  "new_password_confirmation": "NuevaPassword123"
+}
+```
+
+La ruta requiere JWT, verifica la contraseña actual, genera nuevos valores SRP6, actualiza solo `salt/verifier`, invalida la sesión y exige volver a iniciar sesión. El usuario MySQL solo tiene `UPDATE (salt, verifier)` para esta operación.
 
 Debe implementarse usando `SRP6::MakeRegistrationData` equivalente para generar un nuevo `salt` y `verifier`, verificando primero la contraseña actual. No se debe usar `password_hash()` porque rompería el login del cliente WoW.
 
@@ -380,7 +392,7 @@ Esto es adecuado para desarrollo local o una sola instancia. Para cloud con vari
 
 ## SRP6 pendiente
 
-El archivo `srp6.php` contiene el cálculo de verificación y requiere la extensión GMP. El orden de bytes y la normalización se validaron contra una cuenta creada por `worldserver`; el login ya puede emitir JWT. El registro SRP6 está implementado y probado. El cambio de contraseña permanece pendiente hasta completar una ruta de escritura autenticada y su prueba de rollback.
+El archivo `srp6.php` contiene el cálculo de verificación y requiere la extensión GMP. El orden de bytes y la normalización se validaron contra una cuenta creada por `worldserver`; el login ya puede emitir JWT. El registro SRP6 está implementado y probado. El cambio de contraseña está implementado en `POST /api/password`: verifica la contraseña actual, genera nuevos valores SRP6, actualiza únicamente `salt/verifier`, invalida la cookie JWT y obliga a iniciar sesión nuevamente.
 
 El esquema actual de AzerothCore usa:
 

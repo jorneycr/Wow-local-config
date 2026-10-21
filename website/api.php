@@ -91,6 +91,47 @@ if ($path === '/api/login' && $method === 'POST') {
     json_response(200, ['message' => 'Sesión iniciada.']);
 }
 
+if ($path === '/api/password' && $method === 'POST') {
+    enforce_rate_limit('password', 5, 900);
+    require_csrf();
+    try {
+        $claims = authenticated_claims();
+    } catch (Throwable) {
+        json_response(401, ['message' => 'No autenticado.']);
+    }
+
+    $input = request_json();
+    $currentPassword = validate_password($input['current_password'] ?? null);
+    $newPassword = validate_password($input['new_password'] ?? null);
+    $confirmation = (string) ($input['new_password_confirmation'] ?? '');
+    if (!hash_equals($newPassword, $confirmation)) {
+        json_response(422, ['message' => 'Las contraseñas nuevas no coinciden.']);
+    }
+
+    $accountId = (int) ($claims['sub'] ?? 0);
+    $db = database();
+    $statement = $db->prepare('SELECT username, salt, verifier FROM account WHERE id = ? LIMIT 1');
+    $statement->bind_param('i', $accountId);
+    $statement->execute();
+    $account = $statement->get_result()->fetch_assoc();
+    if (!is_array($account) || !srp6_password_matches(
+        (string) $account['username'],
+        $currentPassword,
+        (string) $account['salt'],
+        (string) $account['verifier']
+    )) {
+        json_response(401, ['message' => 'La contraseña actual no es correcta.']);
+    }
+
+    $registration = srp6_registration_data((string) $account['username'], $newPassword);
+    $update = $db->prepare('UPDATE account SET salt = ?, verifier = ? WHERE id = ?');
+    $update->bind_param('ssi', $registration['salt'], $registration['verifier'], $accountId);
+    $update->execute();
+
+    clear_access_cookie();
+    json_response(200, ['message' => 'Contraseña actualizada. Inicia sesión nuevamente.']);
+}
+
 if (in_array($path, ['/api/me', '/api/characters'], true) && $method === 'GET') {
     try {
         $claims = authenticated_claims();
