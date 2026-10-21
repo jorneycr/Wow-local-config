@@ -1,49 +1,137 @@
-# Comandos GM de AzerothCore
+# Comandos GM de AzerothCore por categorías
 
-Guía rápida de comandos de Game Master para AzerothCore/WotLK 3.3.5a.
+Guía práctica para AzerothCore/WotLK 3.3.5a. Está ordenada como un flujo de trabajo para preparar y administrar un personaje nuevo.
 
-## 1. Requisitos
+> La ayuda que muestra tu servidor tiene prioridad. Si un comando devuelve `USAGE`, ejecuta `.help comando`.
 
-La cuenta debe tener permisos GM. En este entorno se configuró:
+## 1. Flujo rápido para un jugador nuevo
 
-```text
-Usuario:    admin
-Contraseña: root
-Nivel GM:   3
-```
+Sustituye `Jorney` por el nombre exacto del personaje.
 
-Para asignar el nivel GM desde la consola del worldserver:
+### 1. Activar GM
 
 ```text
-account set gmlevel admin 3 -1
+.gm on
 ```
 
-El último parámetro `-1` aplica el nivel a todos los reinos.
+### 2. Comprobar la posición y el servidor
 
-## 2. Dónde ejecutar los comandos
+```text
+.gps
+.server info
+```
 
-Los comandos pueden ejecutarse de dos formas:
+### 3. Subir el personaje al nivel 80
+
+Este comando fue probado y funciona en este servidor:
+
+```text
+.character level Jorney 80
+```
+
+### 4. Dar dinero
+
+```text
+.modify money 1000000
+```
+
+Para quitar dinero:
+
+```text
+.modify money -1000000
+```
+
+### 5. Buscar un set u objeto
+
+```text
+.lookup item Colérico
+```
+
+### 6. Añadir una pieza
+
+```text
+.additem 51468
+```
+
+### 7. Añadir un set completo
+
+```text
+.additem set NUMERO
+```
+
+Sustituye `NUMERO` por el ID del set que corresponda a la búsqueda del servidor.
+
+### 8. Comprobar el personaje
+
+```text
+.character info Jorney
+```
+
+### 9. Usar el mapa o teletransportarse
+
+```text
+.gps
+.help tele
+```
+
+### 10. Anunciar una prueba
+
+```text
+.announce Servidor local funcionando correctamente
+```
+
+## 2. Conceptos importantes
+
+El nivel GM y el nivel del personaje son diferentes:
+
+```text
+.gm on
+```
+
+Activa el modo Game Master.
+
+```text
+.character level Jorney 80
+```
+
+Cambia el nivel del personaje.
+
+En este entorno:
+
+```text
+Cuenta GM:       admin
+Contraseña:      root
+Nivel de cuenta: 3
+Personaje:       Jorney
+```
+
+## 3. Dónde ejecutar comandos
+
+### Dentro del juego
+
+Pulsa `Enter` y escribe el comando con punto:
+
+```text
+.gm on
+.gps
+.character level Jorney 80
+```
 
 ### Consola del worldserver
 
 Desde PowerShell:
 
 ```powershell
+cd "D:\Servidor WOW 3.3.5 Local"
 docker compose attach ac-worldserver
 ```
 
-La consola muestra:
+En la consola `AC>` se escribe sin el punto:
 
 ```text
-AC>
-```
-
-Escribe el comando sin la barra `/`.
-
-Ejemplo:
-
-```text
-server info
+gm on
+gps
+character level Jorney 80
 ```
 
 Para salir sin detener el servidor:
@@ -53,59 +141,607 @@ Ctrl-P
 Ctrl-Q
 ```
 
-### Dentro del juego
-
-Pulsa `Enter` para abrir el chat y escribe el comando con `/`:
-
-```text
-/server info
-```
-
-Algunos comandos requieren tener un personaje seleccionado. Otros pueden ejecutarse sin selección.
-
-> La disponibilidad exacta y los argumentos pueden variar ligeramente según la revisión de AzerothCore. Si un comando muestra ayuda, usa esa sintaxis como referencia para la instalación actual.
-
-## 3. Ayuda de comandos
+## 4. Ayuda y descubrimiento de comandos
 
 ### Ayuda general
 
 Dentro del juego:
 
 ```text
-/help
-```
-
-En la consola:
-
-```text
-help
-```
-
-### Ayuda de un comando concreto
-
-```text
-/help account
-/help tele
-/help modify
+.help
 ```
 
 En consola:
 
 ```text
-help account
-help tele
-help modify
+help
 ```
 
-### Listar comandos disponibles
+### Ayuda por categoría
 
 ```text
-/help
+.help account
+.help character
+.help modify
+.help additem
+.help npc
+.help gobject
+.help quest
+.help tele
+.help ban
 ```
 
-La lista depende del nivel GM y de los módulos instalados.
+### Comandos disponibles para tu nivel
 
-## 4. Cuenta y permisos
+```text
+.commands
+```
+
+Si la sintaxis de un comando no coincide con esta guía, usa la ayuda local del servidor.
+
+## 5. Jugadores y personajes
+
+### Información del personaje
+
+```text
+.character info Jorney
+```
+
+### Cambiar el nivel
+
+```text
+.character level Jorney 80
+```
+
+### Cambiar el nombre
+
+```text
+.character rename Jorney
+```
+
+### Cambiar de cuenta
+
+```text
+.character changeaccount Jorney NOMBRE_CUENTA
+```
+
+### Cambiar raza
+
+```text
+.character changerace Jorney
+```
+
+### Cambiar facción
+
+```text
+.character changefaction Jorney
+```
+
+### Personalizar el personaje
+
+```text
+.character customize Jorney
+```
+
+### Ver información del jugador seleccionado
+
+```text
+.pinfo
+```
+
+### Expulsar un jugador
+
+```text
+.kick NOMBRE_JUGADOR Motivo
+```
+
+Ejemplo:
+
+```text
+.kick Jorney Prueba local
+```
+
+### Enviar un mensaje privado
+
+```text
+.whisper NOMBRE_JUGADOR Mensaje
+```
+
+## 6. Modo GM y visibilidad
+
+### Activar GM
+
+```text
+.gm on
+```
+
+### Desactivar GM
+
+```text
+.gm off
+```
+
+### Consultar estado GM
+
+```text
+.gm
+```
+
+### Mostrar etiqueta GM
+
+```text
+.gm visible on
+```
+
+### Ocultar etiqueta GM
+
+```text
+.gm visible off
+```
+
+### Activar vuelo GM
+
+```text
+.gm fly on
+```
+
+### Desactivar vuelo GM
+
+```text
+.gm fly off
+```
+
+La disponibilidad depende de la configuración y del nivel GM.
+
+## 7. Dinero, estadísticas y atributos
+
+Estos comandos modifican al jugador seleccionado. Si no hay ningún jugador seleccionado, se aplican a tu propio personaje.
+
+### Salud / vida
+
+```text
+.modify hp #newhp
+```
+
+Ejemplo:
+
+```text
+.modify hp 100000
+```
+
+Establece la salud máxima indicada.
+
+### Maná
+
+```text
+.modify mana #newmana
+```
+
+Ejemplo:
+
+```text
+.modify mana 100000
+```
+
+Establece el maná máximo indicado.
+
+### Dinero / oro
+
+```text
+.modify money #money
+```
+
+Ejemplo para añadir dinero:
+
+```text
+.modify money 1000000
+```
+
+Ejemplo para quitar dinero:
+
+```text
+.modify money -1000000
+```
+
+El valor se expresa en cobres. El número puede ser negativo para quitar dinero.
+
+### Ira
+
+```text
+.modify rage 100
+```
+
+### Energía
+
+```text
+.modify energy 100
+```
+
+### Velocidad
+
+```text
+.modify speed 2
+```
+
+Restaurar velocidad normal:
+
+```text
+.modify speed 1
+```
+
+### Escala
+
+```text
+.modify scale 2
+```
+
+Restaurar escala normal:
+
+```text
+.modify scale 1
+```
+
+### Montura
+
+```text
+.modify mount ID_MONTURA
+```
+
+Consulta primero el ID correcto:
+
+```text
+.lookup item nombre
+```
+
+## 8. Objetos, sets y equipo
+
+### Buscar un objeto
+
+Comando confirmado en este servidor:
+
+```text
+.lookup item Colérico
+```
+
+También puedes buscar por nombre:
+
+```text
+.lookup item nombre_del_objeto
+```
+
+### Añadir una pieza
+
+```text
+.additem ID
+```
+
+Ejemplo confirmado:
+
+```text
+.additem 51468
+```
+
+### Añadir una cantidad
+
+```text
+.additem ID CANTIDAD
+```
+
+Ejemplo:
+
+```text
+.additem 51468 1
+```
+
+### Buscar sets
+
+```text
+.lookup itemset NOMBRE
+```
+
+Si tu revisión utiliza la búsqueda general:
+
+```text
+.lookup item Colérico
+```
+
+### Añadir un set completo
+
+```text
+.additem set NUMERO
+```
+
+Ejemplo de sintaxis:
+
+```text
+.additem set 123
+```
+
+`NUMERO` debe ser el ID de set que acepta tu servidor, no necesariamente el identificador mostrado por una página web.
+
+### Eliminar un objeto
+
+```text
+.deleteitem ID CANTIDAD
+```
+
+Consulta la sintaxis local si aparece `USAGE`:
+
+```text
+.help deleteitem
+```
+
+## 9. Búsquedas
+
+### Objetos
+
+```text
+.lookup item NOMBRE
+```
+
+### Sets
+
+```text
+.lookup itemset NOMBRE
+```
+
+### Criaturas
+
+```text
+.lookup creature NOMBRE
+```
+
+### Hechizos
+
+```text
+.lookup spell NOMBRE
+```
+
+### Misiones
+
+```text
+.lookup quest NOMBRE
+```
+
+## 10. Teletransporte y posición
+
+### Ver posición
+
+```text
+.gps
+```
+
+Muestra mapa, zona, área y coordenadas.
+
+### Ver ayuda de teletransporte
+
+```text
+.help tele
+```
+
+### Teletransportarse
+
+```text
+.tele NOMBRE_TELETRANSPORTE
+```
+
+Ejemplo:
+
+```text
+.tele Dalaran
+```
+
+### Ir hacia otro jugador
+
+```text
+.appear NOMBRE_JUGADOR
+```
+
+### Traer otro jugador hacia ti
+
+```text
+.summon NOMBRE_JUGADOR
+```
+
+### Regresar a la posición anterior
+
+```text
+.recall
+```
+
+## 11. NPCs
+
+Selecciona un NPC haciendo clic sobre él antes de ejecutar los comandos.
+
+### Ver ayuda de NPC
+
+```text
+.help npc
+```
+
+### Añadir un NPC
+
+```text
+.npc add ENTRY
+```
+
+### Eliminar el NPC seleccionado
+
+```text
+.npc delete
+```
+
+### Ver información del NPC
+
+```text
+.npc info
+```
+
+### Mover un NPC
+
+```text
+.npc move
+```
+
+### Cambiar modelo
+
+```text
+.npc set model ID_MODELO
+```
+
+### Cambiar nivel
+
+```text
+.npc set level NIVEL
+```
+
+### Seguir a un jugador
+
+```text
+.npc follow
+```
+
+### Dejar de seguir
+
+```text
+.npc unfollow
+```
+
+La sintaxis exacta se puede comprobar con:
+
+```text
+.help npc
+```
+
+## 12. Objetos del mundo
+
+Selecciona el objeto del mundo antes de modificarlo.
+
+### Añadir un objeto
+
+```text
+.gobject add ENTRY
+```
+
+### Eliminar el objeto seleccionado
+
+```text
+.gobject delete
+```
+
+### Moverlo
+
+```text
+.gobject move
+```
+
+### Girarlo
+
+```text
+.gobject turn
+```
+
+### Ver información
+
+```text
+.gobject info
+```
+
+## 13. Misiones
+
+### Buscar una misión
+
+```text
+.lookup quest NOMBRE
+```
+
+### Añadir una misión
+
+```text
+.quest add ID_MISION
+```
+
+### Completar una misión
+
+```text
+.quest complete ID_MISION
+```
+
+### Eliminar una misión
+
+```text
+.quest remove ID_MISION
+```
+
+### Entregar/recompensar una misión
+
+```text
+.quest reward ID_MISION
+```
+
+Comprueba la ayuda si alguno no está disponible:
+
+```text
+.help quest
+```
+
+## 14. Hechizos y habilidades
+
+### Buscar un hechizo
+
+```text
+.lookup spell NOMBRE
+```
+
+### Aprender un hechizo
+
+```text
+.learn ID_HECHIZO
+```
+
+### Olvidar un hechizo
+
+```text
+.unlearn ID_HECHIZO
+```
+
+### Aprender hechizos de clase
+
+```text
+.learn all_myclass
+```
+
+### Aprender todos los hechizos GM
+
+```text
+.learn all gm
+```
+
+### Maximizar habilidades
+
+```text
+.maxskill
+```
+
+Establece todas las habilidades del jugador seleccionado en sus valores máximos para el nivel actual. Si no hay un jugador seleccionado, se aplica a tu propio personaje.
+
+### Quitar el grillete GM
+
+Si el personaje queda inmovilizado por el efecto GM, quita el hechizo confirmado en este servidor:
+
+```text
+.unlearn 36356 all
+```
+
+### Aprender hechizos disponibles
+
+```text
+.learn all_myspells
+```
+
+Usa estos comandos con cuidado, especialmente en personajes de prueba.
+
+## 15. Administración de cuentas
 
 Estos comandos se ejecutan normalmente en la consola del worldserver.
 
@@ -115,43 +751,22 @@ Estos comandos se ejecutan normalmente en la consola del worldserver.
 account create NOMBRE CONTRASEÑA
 ```
 
-Ejemplo:
-
-```text
-account create jugador123 ClaveSegura123
-```
-
-### Cambiar el nivel GM
-
-```text
-account set gmlevel NOMBRE NIVEL REINO
-```
-
-Ejemplo para todos los reinos:
-
-```text
-account set gmlevel admin 3 -1
-```
-
-Niveles habituales:
-
-```text
-0 = jugador normal
-1 = moderador
-2 = GM
-3 = administrador
-```
-
-### Ver información de una cuenta
+### Ver información
 
 ```text
 account info NOMBRE
 ```
 
+### Cambiar nivel GM
+
+```text
+account set gmlevel NOMBRE NIVEL -1
+```
+
 Ejemplo:
 
 ```text
-account info admin
+account set gmlevel admin 3 -1
 ```
 
 ### Bloquear una cuenta
@@ -166,7 +781,7 @@ account lock NOMBRE on
 account lock NOMBRE off
 ```
 
-### Listar cuentas conectadas
+### Ver cuentas conectadas
 
 ```text
 account online
@@ -178,665 +793,122 @@ account online
 account delete NOMBRE
 ```
 
-Usa este comando con cuidado. La eliminación puede afectar personajes asociados.
+## 16. Moderación
 
-## 5. Información del servidor
-
-### Información general
-
-Dentro del juego:
+### Anuncio global
 
 ```text
-/server info
+.announce Mensaje para todos
 ```
 
-En consola:
+### Mensaje de sistema
 
 ```text
-server info
+.notify Mensaje para el jugador
 ```
 
-### Estado del servidor
+### Silenciar
 
 ```text
-/server info
+.mute NOMBRE_JUGADOR DURACION Motivo
 ```
 
-### Reiniciar el servidor
-
-No se recomienda reiniciar desde comandos GM durante una sesión de desarrollo si puedes utilizar Docker:
-
-```powershell
-docker compose restart ac-worldserver ac-authserver
-```
-
-### Anunciar un mensaje global
+### Quitar silencio
 
 ```text
-/announce Mensaje para todos los jugadores
-```
-
-En consola:
-
-```text
-announce Mensaje para todos los jugadores
-```
-
-### Enviar un mensaje de sistema
-
-```text
-/server message Mensaje del servidor
-```
-
-Si esta sintaxis no existe en la revisión instalada, consulta:
-
-```text
-/help server
-```
-
-## 6. Movimiento y teletransporte
-
-### Teletransportarse a unas coordenadas
-
-```text
-/tele NombreTeleporte
-```
-
-Ejemplo:
-
-```text
-/tele Dalaran
-```
-
-Los nombres dependen de los teletransportes disponibles en la base de datos.
-
-### Ver teletransportes
-
-```text
-/help tele
-```
-
-### Teletransportar a un jugador
-
-```text
-/tele nombre_jugador
-```
-
-La sintaxis concreta puede depender de la revisión. Consulta:
-
-```text
-/help tele
-```
-
-### Ir al jugador seleccionado
-
-```text
-/gps
-```
-
-Muestra mapa, zona, área y coordenadas de la posición actual.
-
-### Mostrar coordenadas
-
-```text
-/gps
-```
-
-Útil para crear o comprobar posiciones.
-
-### Volver al último punto de teletransporte
-
-```text
-/recall
-```
-
-## 7. Modificar atributos del personaje
-
-Estos comandos normalmente requieren seleccionar un personaje.
-
-### Cambiar nivel
-
-```text
-/modify level 80
-```
-
-Ejemplo:
-
-```text
-/modify level 80
-```
-
-### Cambiar dinero
-
-```text
-/modify money CANTIDAD
-```
-
-La cantidad suele expresarse en cobres.
-
-Ejemplo para añadir una cantidad:
-
-```text
-/modify money 1000000
-```
-
-Consulta la ayuda local antes de usarlo:
-
-```text
-/help modify money
-```
-
-### Cambiar velocidad
-
-```text
-/modify speed 2
-```
-
-Restaurar una velocidad normal:
-
-```text
-/modify speed 1
-```
-
-### Cambiar escala
-
-```text
-/modify scale 2
-```
-
-Restaurar la escala normal:
-
-```text
-/modify scale 1
-```
-
-### Cambiar energía o salud
-
-La sintaxis puede variar según la revisión. Consultar:
-
-```text
-/help modify
-```
-
-## 8. Objetos y equipo
-
-### Añadir un objeto
-
-```text
-/additem ID_CANTIDAD
-```
-
-Ejemplo:
-
-```text
-/additem item_id 1
-```
-
-Sustituye `item_id` por el ID real del objeto.
-
-Forma habitual con nombre o ID:
-
-```text
-.additem item_id cantidad
-```
-
-Si el comando no acepta la sintaxis, utiliza:
-
-```text
-/help additem
-```
-
-### Eliminar un objeto
-
-```text
-/delitem ID_CANTIDAD
-```
-
-### Buscar objetos
-
-```text
-/lookup item nombre
-```
-
-Ejemplo:
-
-```text
-/lookup item Frostmourne
-```
-
-### Buscar criaturas
-
-```text
-/lookup creature nombre
-```
-
-### Buscar hechizos
-
-```text
-/lookup spell nombre
-```
-
-### Buscar misiones
-
-```text
-/lookup quest nombre
-```
-
-## 9. Criaturas y entidades
-
-### Seleccionar una criatura cercana
-
-Haz clic sobre la criatura dentro del juego y usa los comandos de selección disponibles.
-
-### Ver información de la criatura
-
-```text
-/ npc info
-```
-
-Según la revisión puede ser:
-
-```text
-/npc info
-```
-
-Consulta:
-
-```text
-/help npc
-```
-
-### Crear una criatura
-
-```text
-/npc add ENTRY
-```
-
-Ejemplo:
-
-```text
-/npc add 12345
-```
-
-### Eliminar una criatura
-
-Selecciona la criatura y usa:
-
-```text
-/npc delete
-```
-
-### Cambiar el movimiento de una criatura
-
-```text
-/npc set movement id 1
-```
-
-Consulta la ayuda de la revisión antes de aplicar cambios:
-
-```text
-/help npc
-```
-
-## 10. Objetos del mundo
-
-### Crear un objeto del mundo
-
-```text
-/gobject add ENTRY
-```
-
-### Eliminar un objeto seleccionado
-
-```text
-/gobject delete
-```
-
-### Ver información de un objeto
-
-```text
-/gobject info
-```
-
-Consulta:
-
-```text
-/help gobject
-```
-
-## 11. Jugadores
-
-### Ver información del jugador seleccionado
-
-```text
-/pinfo
-```
-
-### Inspeccionar a un jugador
-
-Selecciona el personaje y usa:
-
-```text
-/pinfo
-```
-
-### Expulsar a un jugador
-
-```text
-/kick NombreJugador Motivo
-```
-
-Ejemplo:
-
-```text
-/kick jugador123 Prueba de administración
-```
-
-### Enviar mensaje privado
-
-```text
-/whisper NombreJugador Mensaje
-```
-
-### Silenciar a un jugador
-
-La sintaxis puede depender de los módulos y de la versión:
-
-```text
-/mute NombreJugador minutos Motivo
-```
-
-Consulta:
-
-```text
-/help mute
+.unmute NOMBRE_JUGADOR
 ```
 
 ### Banear una cuenta
 
 ```text
-/ban account NombreCuenta duración Motivo
+.ban account NOMBRE_CUENTA DURACION Motivo
 ```
 
 ### Banear un personaje
 
 ```text
-/ban character NombrePersonaje duración Motivo
+.ban character NOMBRE_PERSONAJE DURACION Motivo
 ```
 
-### Banear una dirección IP
+### Banear una IP
 
 ```text
-/ban ip DirecciónIP duración Motivo
-```
-
-La duración puede expresarse según la sintaxis de la instalación. Para no equivocarte:
-
-```text
-/help ban
+.ban ip DIRECCION_IP DURACION Motivo
 ```
 
 ### Quitar un baneo
 
 ```text
-/unban account NombreCuenta
-/unban character NombrePersonaje
-/unban ip DirecciónIP
+.unban account NOMBRE_CUENTA
+.unban character NOMBRE_PERSONAJE
+.unban ip DIRECCION_IP
 ```
 
-## 12. Misiones y progreso
-
-### Reiniciar una misión
-
-Selecciona el jugador y consulta:
+Consulta siempre la sintaxis:
 
 ```text
-/help quest
+.help ban
 ```
 
-Comandos habituales:
+## 17. Servidor y depuración
+
+### Información del servidor
 
 ```text
-/quest add ID
-/quest remove ID
-/quest complete ID
+.server info
 ```
 
-La disponibilidad exacta depende de la revisión.
-
-### Completar una misión
+### Mensaje del día
 
 ```text
-/quest complete ID_MISION
+.server motd
 ```
 
-### Añadir una misión
+### Recargar una tabla
 
 ```text
-/quest add ID_MISION
+.reload NOMBRE_TABLA
 ```
 
-### Eliminar una misión
+Ejemplos, solo si la ayuda de tu revisión los confirma:
 
 ```text
-/quest remove ID_MISION
+.reload config
+.reload creature_template
+.reload quest_template
 ```
 
-## 13. Hechizos y habilidades
+### Apagar o reiniciar
 
-### Aprender un hechizo
-
-```text
-/learn ID_HECHIZO
-```
-
-### Olvidar un hechizo
-
-```text
-/unlearn ID_HECHIZO
-```
-
-### Buscar un hechizo
-
-```text
-/lookup spell Nombre
-```
-
-Ejemplo:
-
-```text
-/lookup spell Frostbolt
-```
-
-## 14. Modo GM y visibilidad
-
-### Activar modo GM
-
-```text
-/gm on
-```
-
-### Desactivar modo GM
-
-```text
-/gm off
-```
-
-### Activar etiqueta GM
-
-```text
-/gm visible on
-```
-
-### Ocultar etiqueta GM
-
-```text
-/gm visible off
-```
-
-### Activar modo invisible
-
-```text
-/invincible on
-```
-
-La sintaxis puede variar. Consulta:
-
-```text
-/help gm
-/help invisible
-```
-
-## 15. Depuración y desarrollo
-
-### Ver posición
-
-```text
-/gps
-```
-
-### Ver selección actual
-
-```text
-/target
-```
-
-### Ver información de una criatura u objeto
-
-```text
-/lookup creature Nombre
-/lookup item Nombre
-/lookup spell Nombre
-```
-
-### Recargar configuraciones
-
-No recargues tablas arbitrariamente en un servidor con jugadores conectados. Para comandos disponibles:
-
-```text
-/help reload
-```
-
-Algunas recargas habituales pueden ser:
-
-```text
-/reload config
-/reload creature_template
-/reload quest_template
-```
-
-Confirma siempre la tabla y sintaxis con la revisión instalada.
-
-## 16. Comandos útiles para pruebas locales
-
-Secuencia de prueba recomendada dentro del juego:
-
-```text
-/gm on
-/modify level 80
-/gps
-/server info
-```
-
-Para probar objetos:
-
-```text
-/lookup item nombre
-/additem ID cantidad
-```
-
-Para probar teletransporte:
-
-```text
-/help tele
-/tele NombreTeleporte
-```
-
-Para anunciar una prueba:
-
-```text
-/announce Servidor local funcionando correctamente
-```
-
-## 17. Comandos desde PowerShell
-
-### Ver el estado
-
-```powershell
-docker compose ps
-```
-
-### Ver logs
-
-```powershell
-docker compose logs -f ac-worldserver
-```
-
-### Entrar en la consola del servidor
-
-```powershell
-docker compose attach ac-worldserver
-```
-
-### Reiniciar el worldserver
+Para mantenimiento local es más seguro usar Docker desde PowerShell:
 
 ```powershell
 docker compose restart ac-worldserver
 ```
 
-### Reiniciar authserver
-
 ```powershell
 docker compose restart ac-authserver
 ```
 
-## 18. Diferencia entre consola y chat
+## 18. Seguridad
 
-En la consola Docker:
-
-```text
-account info admin
-server info
-announce Mensaje
-```
-
-Dentro del juego:
-
-```text
-/account info admin
-/server info
-/announce Mensaje
-```
-
-La consola normalmente no utiliza `/`. El chat del juego sí.
-
-## 19. Seguridad y precauciones
-
-- Prueba comandos destructivos con un personaje de prueba.
-- Haz una copia de seguridad antes de editar personajes o cuentas.
-- No ejecutes `DELETE` directamente sobre las bases mientras el servidor está activo.
+- Haz una copia de seguridad antes de modificar cuentas o personajes.
+- Prueba cambios destructivos con un personaje de prueba.
+- No modifiques directamente las tablas de personajes mientras el worldserver está activo.
 - No compartas la cuenta GM.
-- Cambia la contraseña `root` si el servidor deja de ser exclusivamente local.
-- No otorgues nivel GM 3 a cuentas normales.
-- No uses comandos de ban sin verificar el objetivo.
-- Comprueba la ayuda local cuando la sintaxis no coincida.
-- Los comandos de la revisión instalada tienen prioridad sobre los ejemplos de esta guía.
+- No otorgues GM nivel 3 a cuentas normales.
+- Comprueba el objetivo antes de usar `kick`, `ban`, `delete` o `remove`.
+- La ayuda del servidor instalado tiene prioridad sobre ejemplos de Internet.
 
-## 20. Ayuda recomendada cuando un comando falla
+## 19. Comandos confirmados en esta instalación
 
-Si un comando devuelve `USAGE` o muestra la ayuda, ejecuta:
+Estos comandos fueron probados y funcionaron:
 
 ```text
-/help nombre_del_comando
-```
-
-Ejemplos:
-
-```text
-/help account
-/help modify
-/help npc
-/help tele
-/help ban
-/help quest
+.gm on
+.character level Jorney 80
+.lookup item Colérico
+.additem 51468
+.additem set NUMERO
 ```

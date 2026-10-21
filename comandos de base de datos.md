@@ -197,6 +197,65 @@ docker compose exec ac-database mysql -uroot -proot acore_auth -e "UPDATE realml
 docker compose exec ac-database mysql -uroot -proot acore_auth -e "SELECT id, name, address, localAddress, port FROM realmlist WHERE id=1;"
 ```
 
+### Cambiar el nombre del reino
+
+```sql
+UPDATE realmlist
+SET name = 'Reino Local'
+WHERE id = 1;
+```
+
+Desde PowerShell:
+
+```powershell
+docker compose exec ac-database mysql -uroot -proot acore_auth -e "UPDATE realmlist SET name='Reino Local' WHERE id=1;"
+```
+
+Después reinicia el authserver:
+
+```powershell
+docker compose restart ac-authserver
+```
+
+Cierra y vuelve a abrir el cliente para actualizar la lista de reinos.
+
+### Crear otro reino en `realmlist`
+
+Primero revisa las columnas disponibles:
+
+```powershell
+docker compose exec ac-database mysql -uroot -proot acore_auth -e "DESCRIBE realmlist;"
+```
+
+Después crea la fila del nuevo reino:
+
+```sql
+INSERT INTO realmlist
+    (name, address, localAddress, port, icon, flag, timezone, allowedSecurityLevel)
+VALUES
+    ('Reino PvP', '127.0.0.1', '127.0.0.1', 8086, 1, 0, 1, 0);
+```
+
+Desde PowerShell:
+
+```powershell
+docker compose exec ac-database mysql -uroot -proot acore_auth -e "INSERT INTO realmlist (name, address, localAddress, port, icon, flag, timezone, allowedSecurityLevel) VALUES ('Reino PvP', '127.0.0.1', '127.0.0.1', 8086, 1, 0, 1, 0);"
+```
+
+Verificar:
+
+```powershell
+docker compose exec ac-database mysql -uroot -proot acore_auth -e "SELECT id, name, address, localAddress, port FROM realmlist;"
+```
+
+> Insertar una fila no crea por sí solo un segundo servidor. Un reino real necesita otra instancia de `worldserver`, un puerto de juego diferente y su configuración `RealmID`. Antes de crear reinos, haz una copia de seguridad.
+
+### Copia de seguridad antes de cambiar reinos
+
+```powershell
+docker compose exec -T ac-database mysqldump -uroot -proot acore_auth > backup-auth-before-realms.sql
+```
+
 ## 8. Personajes
 
 Los personajes se almacenan en:
