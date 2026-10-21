@@ -24,6 +24,7 @@ if ($path === '/api/register' && $method === 'POST') {
     enforce_rate_limit('register', 5, 900);
     require_csrf();
     $input = request_json();
+    $email = validate_email($input['email'] ?? null);
     $username = validate_username($input['username'] ?? null);
     $password = validate_password($input['password'] ?? null);
     $confirmation = (string) ($input['password_confirmation'] ?? '');
@@ -32,23 +33,23 @@ if ($path === '/api/register' && $method === 'POST') {
         json_response(422, ['message' => 'Las contraseñas no coinciden.']);
     }
 
-    json_response(501, ['message' => 'El registro SRP6 todavía está pendiente de activación.']);
+    json_response(501, ['message' => 'El registro SRP6 todavía está pendiente de activación.', 'email' => $email]);
 }
 
 if ($path === '/api/login' && $method === 'POST') {
     enforce_rate_limit('login', 10, 900);
     require_csrf();
     $input = request_json();
-    $username = validate_username($input['username'] ?? null);
+    $email = validate_email($input['email'] ?? null);
     $password = validate_password($input['password'] ?? null);
     $db = database();
-    $statement = $db->prepare('SELECT id, username, salt, verifier, locked FROM account WHERE username = ? LIMIT 1');
-    $statement->bind_param('s', $username);
+    $statement = $db->prepare('SELECT id, username, email, salt, verifier, locked FROM account WHERE LOWER(email) = ? LIMIT 1');
+    $statement->bind_param('s', $email);
     $statement->execute();
     $account = $statement->get_result()->fetch_assoc();
 
     if (!is_array($account) || (int) $account['locked'] !== 0 || !srp6_password_matches(
-        $username,
+        (string) ($account['username'] ?? ''),
         $password,
         (string) $account['salt'],
         (string) $account['verifier']
@@ -69,9 +70,22 @@ if (in_array($path, ['/api/me', '/api/characters'], true) && $method === 'GET') 
 
     $accountId = (int) ($claims['sub'] ?? 0);
     if ($path === '/api/me') {
+        $db = database();
+        $statement = $db->prepare('SELECT username, email, joindate, last_login, last_ip FROM account WHERE id = ? LIMIT 1');
+        $statement->bind_param('i', $accountId);
+        $statement->execute();
+        $account = $statement->get_result()->fetch_assoc();
+        if (!is_array($account)) {
+            json_response(401, ['message' => 'No autenticado.']);
+        }
+
         json_response(200, [
             'id' => $accountId,
-            'username' => (string) ($claims['username'] ?? ''),
+            'username' => (string) $account['username'],
+            'email' => (string) $account['email'],
+            'joindate' => $account['joindate'],
+            'last_login' => $account['last_login'],
+            'last_ip' => (string) $account['last_ip'],
         ]);
     }
 

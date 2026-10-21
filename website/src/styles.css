@@ -96,6 +96,14 @@ h2 {
 form { display: grid; gap: 18px; }
 .form-label { margin: 0; }
 .panel-copy { color: #c5cee1; font-weight: 700; }
+.account-summary { display: grid; gap: 0; margin-bottom: 26px; border-top: 1px solid #243453; }
+.account-summary div { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 13px 0; border-bottom: 1px solid #243453; }
+.account-summary span, .security-card span { color: #8e9bb4; font-size: 0.82rem; }
+.account-summary strong, .security-card strong { color: #e9eef7; text-align: right; overflow-wrap: anywhere; }
+.section-label { margin-top: 24px; margin-bottom: 12px; }
+.security-card { margin-top: 24px; padding: 18px; border: 1px solid #2c3959; border-radius: 14px; background: rgba(14, 23, 45, 0.65); }
+.security-card .eyebrow { margin-bottom: 14px; }
+.security-card div { display: flex; justify-content: space-between; gap: 16px; }
 .divider { display: flex; align-items: center; gap: 12px; margin: 24px 0; color: #71809c; font-size: 0.78rem; }
 .divider::before, .divider::after { content: ''; height: 1px; flex: 1; background: #2c3959; }
 .character-list { display: grid; gap: 10px; padding: 0; margin: 0; list-style: none; }
@@ -103,6 +111,10 @@ form { display: grid; gap: 18px; }
 .character-list span { color: #8e9bb4; font-size: 0.82rem; }
 label { display: grid; gap: 8px; color: #c5cee1; font-size: 0.9rem; font-weight: 700; }
 input { width: 100%; padding: 14px 15px; border: 1px solid #2c3959; border-radius: 12px; outline: none; color: #f7f9ff; background: #0e172d; transition: border-color 160ms ease, box-shadow 160ms ease; }
+.password-field { position: relative; }
+.password-field input { padding-right: 86px; }
+.password-toggle { position: absolute; top: 50%; right: 8px; margin: 0; padding: 7px 9px; transform: translateY(-50%); border: 0; color: #76e4d2; background: transparent; font-size: 0.72rem; }
+.password-toggle:hover:not(:disabled) { transform: translateY(-50%); color: #9cf1e2; background: rgba(118, 228, 210, 0.08); }
 input::placeholder { color: #61708e; }
 input:focus { border-color: #76e4d2; box-shadow: 0 0 0 4px rgba(118, 228, 210, 0.12); }
 button { margin-top: 6px; padding: 15px 18px; border: 0; border-radius: 12px; color: #07131d; background: #76e4d2; cursor: pointer; font-weight: 900; transition: transform 160ms ease, background 160ms ease; }

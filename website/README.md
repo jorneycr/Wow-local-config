@@ -219,13 +219,14 @@ Cuerpo:
 
 ```json
 {
+  "email": "player@example.com",
   "username": "PLAYER",
   "password": "Password123",
   "password_confirmation": "Password123"
 }
 ```
 
-El endpoint actualmente devuelve `501` después de validar porque falta conectar la generación SRP6.
+El endpoint valida correo, usuario y contraseña. La creación de cuentas permanece pendiente de activar para escribir `salt`/`verifier` SRP6.
 
 ### Login
 
@@ -235,7 +236,16 @@ Content-Type: application/json
 X-CSRF-Token: <token>
 ```
 
-El endpoint valida SRP6, CSRF y rate limiting. Con credenciales correctas emite una cookie JWT `HttpOnly`; con credenciales incorrectas devuelve `401`.
+El login usa correo electrónico, no el nombre de usuario:
+
+```json
+{
+  "email": "admin@example.com",
+  "password": "AdminLocal123"
+}
+```
+
+El endpoint valida correo, SRP6, CSRF y rate limiting. Con credenciales correctas emite una cookie JWT `HttpOnly`; con credenciales incorrectas devuelve `401`.
 
 ### Sesión actual
 

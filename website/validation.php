@@ -12,6 +12,16 @@ function validate_username(mixed $value): string
     return $username;
 }
 
+function validate_email(mixed $value): string
+{
+    $email = strtolower(trim((string) $value));
+    if (filter_var($email, FILTER_VALIDATE_EMAIL) === false || strlen($email) > 255) {
+        json_response(422, ['message' => 'Introduce un correo electrónico válido.']);
+    }
+
+    return $email;
+}
+
 function validate_password(mixed $value): string
 {
     $password = (string) $value;

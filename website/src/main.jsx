@@ -2,7 +2,7 @@ import { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
 
-const initialForm = { username: '', password: '', confirmation: '' };
+const initialForm = { email: '', username: '', password: '', confirmation: '' };
 
 async function apiRequest(path, options = {}) {
   const response = await fetch(path, { ...options, credentials: 'same-origin' });
@@ -22,10 +22,11 @@ async function csrfToken() {
 
 function App() {
   const [form, setForm] = useState(initialForm);
-  const [login, setLogin] = useState({ username: '', password: '' });
+  const [login, setLogin] = useState({ email: '', password: '' });
   const [account, setAccount] = useState(null);
   const [characters, setCharacters] = useState([]);
   const [mode, setMode] = useState('login');
+  const [visibleFields, setVisibleFields] = useState({ login: false, password: false, confirmation: false });
   const [status, setStatus] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -37,12 +38,16 @@ function App() {
     setLogin((current) => ({ ...current, [event.target.name]: event.target.value }));
   };
 
+  const togglePassword = (field) => {
+    setVisibleFields((current) => ({ ...current, [field]: !current[field] }));
+  };
+
   const submitLogin = async (event) => {
     event.preventDefault();
     setStatus(null);
 
-    if (login.username.trim() === '' || login.password === '') {
-      setStatus({ type: 'error', text: 'Introduce tu usuario y contraseña.' });
+    if (login.email.trim() === '' || login.password === '') {
+      setStatus({ type: 'error', text: 'Introduce tu correo y contraseña.' });
       return;
     }
 
@@ -52,7 +57,7 @@ function App() {
       await apiRequest('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token },
-        body: JSON.stringify({ ...login }),
+        body: JSON.stringify({ email: login.email, password: login.password }),
       });
       const session = await apiRequest('/api/me');
       const result = await apiRequest('/api/characters');
@@ -69,6 +74,10 @@ function App() {
     event.preventDefault();
     setStatus(null);
 
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      setStatus({ type: 'error', text: 'Introduce un correo electrónico válido.' });
+      return;
+    }
     if (!/^[A-Za-z0-9]{3,16}$/.test(form.username)) {
       setStatus({ type: 'error', text: 'Usa entre 3 y 16 caracteres alfanuméricos.' });
       return;
@@ -90,6 +99,7 @@ function App() {
         credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token },
         body: JSON.stringify({
+          email: form.email,
           username: form.username,
           password: form.password,
           password_confirmation: form.confirmation,
@@ -123,7 +133,14 @@ function App() {
 
         {account ? (
           <div className="account-panel">
-            <p className="panel-copy">Tus personajes</p>
+            <p className="eyebrow">Resumen de mi cuenta</p>
+            <div className="account-summary">
+              <div><span>Correo electrónico</span><strong>{account.email || 'No configurado'}</strong></div>
+              <div><span>Nombre de usuario</span><strong>{account.username}</strong></div>
+              <div><span>Registrado desde</span><strong>{account.joindate || '—'}</strong></div>
+              <div><span>Última conexión</span><strong>{account.last_login || '—'}</strong></div>
+            </div>
+            <p className="eyebrow section-label">Mis personajes</p>
             {characters.length === 0 ? <p className="hint">No hay personajes asociados.</p> : (
               <ul className="character-list">
                 {characters.map((character) => (
@@ -134,7 +151,11 @@ function App() {
                 ))}
               </ul>
             )}
-            <p className="hint">El cambio de contraseña estará disponible después de completar el flujo SRP6.</p>
+            <div className="security-card">
+              <p className="eyebrow">Seguridad de la cuenta</p>
+              <div><span>Contraseña</span><strong>••••••••</strong></div>
+              <p className="hint">El cambio de contraseña se habilitará desde esta sección.</p>
+            </div>
             <button type="button" onClick={async () => {
               try {
                 const token = await csrfToken();
@@ -154,16 +175,17 @@ function App() {
             {mode === 'login' ? (
               <form onSubmit={submitLogin} noValidate>
                 <p className="eyebrow form-label">Iniciar sesión</p>
-                <label>Usuario<input name="username" value={login.username} onChange={updateLogin} autoComplete="username" required /></label>
-                <label>Contraseña<input type="password" name="password" value={login.password} onChange={updateLogin} autoComplete="current-password" required /></label>
+                <label>Correo electrónico<input type="email" name="email" value={login.email} onChange={updateLogin} autoComplete="email" required /></label>
+                <label>Contraseña<div className="password-field"><input type={visibleFields.login ? 'text' : 'password'} name="password" value={login.password} onChange={updateLogin} autoComplete="current-password" required /><button className="password-toggle" type="button" onClick={() => togglePassword('login')} aria-label={visibleFields.login ? 'Ocultar contraseña' : 'Mostrar contraseña'}>{visibleFields.login ? 'Ocultar' : 'Mostrar'}</button></div></label>
                 <button type="submit" disabled={isSubmitting}>{isSubmitting ? 'Validando…' : 'Iniciar sesión'}</button>
               </form>
             ) : (
               <form onSubmit={submit} noValidate>
                 <p className="eyebrow form-label">Crear cuenta</p>
+                <label>Correo electrónico<input type="email" name="email" value={form.email} onChange={updateField} autoComplete="email" required /></label>
                 <label>Usuario<input name="username" value={form.username} onChange={updateField} minLength="3" maxLength="16" autoComplete="username" required /></label>
-                <label>Contraseña<input type="password" name="password" value={form.password} onChange={updateField} minLength="8" maxLength="32" autoComplete="new-password" required /></label>
-                <label>Confirmar contraseña<input type="password" name="confirmation" value={form.confirmation} onChange={updateField} minLength="8" maxLength="32" autoComplete="new-password" required /></label>
+                <label>Contraseña<div className="password-field"><input type={visibleFields.password ? 'text' : 'password'} name="password" value={form.password} onChange={updateField} minLength="8" maxLength="32" autoComplete="new-password" required /><button className="password-toggle" type="button" onClick={() => togglePassword('password')} aria-label={visibleFields.password ? 'Ocultar contraseña' : 'Mostrar contraseña'}>{visibleFields.password ? 'Ocultar' : 'Mostrar'}</button></div></label>
+                <label>Confirmar contraseña<div className="password-field"><input type={visibleFields.confirmation ? 'text' : 'password'} name="confirmation" value={form.confirmation} onChange={updateField} minLength="8" maxLength="32" autoComplete="new-password" required /><button className="password-toggle" type="button" onClick={() => togglePassword('confirmation')} aria-label={visibleFields.confirmation ? 'Ocultar contraseña' : 'Mostrar contraseña'}>{visibleFields.confirmation ? 'Ocultar' : 'Mostrar'}</button></div></label>
                 <button type="submit" disabled={isSubmitting}>{isSubmitting ? 'Validando…' : 'Crear cuenta'}</button>
               </form>
             )}
