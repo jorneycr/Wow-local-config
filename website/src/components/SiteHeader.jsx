@@ -1,3 +1,5 @@
+import { AccountDropdown } from './AccountDropdown';
+
 export function SiteHeader({ account, onNavigate, onLogout }) {
   return (
     <header className="site-header">
@@ -13,15 +15,10 @@ export function SiteHeader({ account, onNavigate, onLogout }) {
         <button type="button" onClick={() => onNavigate('help')}>Ayuda</button>
       </nav>
       <div className="header-actions">
-        {account ? (
-          <button className="account-chip" type="button" onClick={() => onNavigate('panel')}>
-            <span className="online-dot" /> {account.username}
-          </button>
-        ) : (
+        {account ? <AccountDropdown account={account} onNavigate={onNavigate} onLogout={onLogout} /> : (
           <button className="button button-ghost" type="button" onClick={() => onNavigate('auth')}>Acceder</button>
         )}
         <button className="button button-primary" type="button" onClick={() => onNavigate('start')}>Descargar</button>
-        {account && <button className="text-button" type="button" onClick={onLogout}>Salir</button>}
       </div>
     </header>
   );
