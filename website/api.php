@@ -132,6 +132,37 @@ if ($path === '/api/password' && $method === 'POST') {
     json_response(200, ['message' => 'Contraseña actualizada. Inicia sesión nuevamente.']);
 }
 
+if ($path === '/api/character' && $method === 'GET') {
+    try {
+        $claims = authenticated_claims();
+    } catch (Throwable) {
+        json_response(401, ['message' => 'No autenticado.']);
+    }
+
+    $guid = filter_input(INPUT_GET, 'guid', FILTER_VALIDATE_INT);
+    if ($guid === false || $guid === null || $guid < 1) {
+        json_response(422, ['message' => 'Personaje no válido.']);
+    }
+
+    $db = database('characters');
+    $statement = $db->prepare(
+        'SELECT guid, name, level, race, class, gender, xp, money, map, zone, online, totaltime, totalHonorPoints, arenaPoints, totalKills, health, power1, power2, power3, power4, power5, power6, power7, creation_date FROM characters WHERE guid = ? AND account = ? LIMIT 1'
+    );
+    $accountId = (int) ($claims['sub'] ?? 0);
+    $statement->bind_param('ii', $guid, $accountId);
+    $statement->execute();
+    $character = $statement->get_result()->fetch_assoc();
+    if (!is_array($character)) {
+        json_response(404, ['message' => 'Personaje no encontrado.']);
+    }
+
+    foreach (['guid', 'level', 'race', 'class', 'gender', 'xp', 'money', 'map', 'zone', 'online', 'totaltime', 'totalHonorPoints', 'arenaPoints', 'totalKills', 'health', 'power1', 'power2', 'power3', 'power4', 'power5', 'power6', 'power7'] as $key) {
+        $character[$key] = (int) $character[$key];
+    }
+    $character['online'] = (bool) $character['online'];
+    json_response(200, ['character' => $character]);
+}
+
 if (in_array($path, ['/api/me', '/api/characters'], true) && $method === 'GET') {
     try {
         $claims = authenticated_claims();
@@ -162,7 +193,7 @@ if (in_array($path, ['/api/me', '/api/characters'], true) && $method === 'GET') 
 
     $db = database('characters');
     $statement = $db->prepare(
-        'SELECT name, level, race, class, online FROM characters WHERE account = ? ORDER BY name'
+        'SELECT guid, name, level, race, class, online FROM characters WHERE account = ? ORDER BY name'
     );
     $statement->bind_param('i', $accountId);
     $statement->execute();
@@ -170,6 +201,7 @@ if (in_array($path, ['/api/me', '/api/characters'], true) && $method === 'GET') 
     $characters = [];
     while ($character = $result->fetch_assoc()) {
         $characters[] = [
+            'guid' => (int) $character['guid'],
             'name' => $character['name'],
             'level' => (int) $character['level'],
             'race' => (int) $character['race'],

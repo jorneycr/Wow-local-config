@@ -22,6 +22,24 @@ El login web SRP6 ya está implementado y probado contra la revisión exacta de 
 
 ## Estructura
 
+El frontend está dividido por responsabilidad:
+
+```text
+src/
+├── api.js
+├── components/
+│   ├── PasswordField.jsx
+│   └── SiteHeader.jsx
+├── views/
+│   ├── AuthView.jsx
+│   ├── HomeView.jsx
+│   ├── InfoView.jsx
+│   ├── PanelView.jsx
+│   └── RecoverView.jsx
+├── main.jsx
+└── styles.css
+```
+
 ```text
 website/
 ├── Dockerfile
@@ -499,6 +517,16 @@ Pruebas manuales:
 - Enviar una petición POST sin CSRF y comprobar `403`.
 - Superar el límite de solicitudes y comprobar `429`.
 - Comprobar que el registro responde `501` hasta activar SRP6.
+
+## Vistas del frontend
+
+- Inicio: presentación del reino y llamadas a la acción.
+- Acceso: login y registro en pestañas separadas.
+- Recuperación: formulario visual preparado para el backend futuro.
+- Panel: resumen de cuenta, personajes sin imágenes y seguridad.
+- Información: páginas reutilizables para ayuda, eventos, estado y cómo empezar.
+
+La UI usa CSS propio para mantener una apariencia ligera, consistente y fácil de desplegar junto con PHP/Nginx. No depende de una biblioteca de componentes pesada; Material UI puede añadirse más adelante si se necesitan tablas complejas, gráficas o accesibilidad avanzada.
 
 ## Producción cloud
 
