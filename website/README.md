@@ -119,7 +119,7 @@ ALTER USER 'website'@'%' IDENTIFIED BY 'NUEVA_CONTRASEÑA';
 FLUSH PRIVILEGES;
 ```
 
-El usuario se limita a `SELECT` porque el registro aún está bloqueado hasta completar SRP6. Cuando se active el registro, se concederá únicamente el permiso de escritura necesario y se revisarán las columnas exactas.
+El usuario tiene `SELECT` limitado y únicamente `INSERT` sobre las columnas necesarias para crear cuentas SRP6. No tiene permisos de `UPDATE`, `DELETE`, DDL ni privilegios administrativos.
 
 ## Desarrollo React con Vite
 
@@ -380,7 +380,7 @@ Esto es adecuado para desarrollo local o una sola instancia. Para cloud con vari
 
 ## SRP6 pendiente
 
-El archivo `srp6.php` contiene el cálculo de verificación y requiere la extensión GMP. El orden de bytes y la normalización se validaron contra una cuenta creada por `worldserver`; el login ya puede emitir JWT. El registro y cambio de contraseña permanecen bloqueados hasta completar pruebas de escritura SRP6.
+El archivo `srp6.php` contiene el cálculo de verificación y requiere la extensión GMP. El orden de bytes y la normalización se validaron contra una cuenta creada por `worldserver`; el login ya puede emitir JWT. El registro SRP6 está implementado y probado. El cambio de contraseña permanece pendiente hasta completar una ruta de escritura autenticada y su prueba de rollback.
 
 El esquema actual de AzerothCore usa:
 

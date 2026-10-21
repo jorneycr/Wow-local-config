@@ -9,7 +9,11 @@ function srp6_registration_data(string $username, string $password): array
     }
 
     $salt = random_bytes(32);
-    $verifier = srp6_verifier($username, $password, $salt);
+    $verifier = srp6_verifier(
+        strtoupper_basic_latin($username),
+        strtoupper_basic_latin($password),
+        $salt
+    );
 
     return ['salt' => $salt, 'verifier' => $verifier];
 }

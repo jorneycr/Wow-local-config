@@ -33,7 +33,37 @@ if ($path === '/api/register' && $method === 'POST') {
         json_response(422, ['message' => 'Las contraseñas no coinciden.']);
     }
 
-    json_response(501, ['message' => 'El registro SRP6 todavía está pendiente de activación.', 'email' => $email]);
+    $db = database();
+    $check = $db->prepare('SELECT id FROM account WHERE username = ? OR LOWER(email) = ? LIMIT 1');
+    $check->bind_param('ss', $username, $email);
+    $check->execute();
+    if ($check->get_result()->fetch_assoc() !== null) {
+        json_response(409, ['message' => 'El usuario o correo ya está registrado.']);
+    }
+
+    $registration = srp6_registration_data($username, $password);
+    $statement = $db->prepare(
+        'INSERT INTO account (username, email, reg_mail, salt, verifier, expansion, joindate) VALUES (?, ?, ?, ?, ?, 2, NOW())'
+    );
+    $statement->bind_param(
+        'sssss',
+        $username,
+        $email,
+        $email,
+        $registration['salt'],
+        $registration['verifier']
+    );
+
+    try {
+        $statement->execute();
+    } catch (mysqli_sql_exception $exception) {
+        if ($exception->getCode() === 1062) {
+            json_response(409, ['message' => 'El usuario o correo ya está registrado.']);
+        }
+        throw $exception;
+    }
+
+    json_response(201, ['message' => 'Cuenta creada correctamente.']);
 }
 
 if ($path === '/api/login' && $method === 'POST') {
