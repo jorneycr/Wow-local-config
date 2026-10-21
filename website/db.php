@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-function database(): mysqli
+function database(string $database = 'auth'): mysqli
 {
+    $databaseName = $database === 'characters' ? 'acore_characters' : 'acore_auth';
     $db = new mysqli(
         getenv('DB_HOST') ?: 'ac-database',
         getenv('DB_USER') ?: 'acore',
         getenv('DB_PASSWORD') ?: '',
-        getenv('DB_NAME') ?: 'acore_auth',
+        $databaseName,
         (int) (getenv('DB_PORT') ?: 3306)
     );
 

@@ -129,6 +129,8 @@ services:
       context: ./website
     container_name: ac-website
     restart: unless-stopped
+    networks:
+      - ac-network
     depends_on:
       ac-database:
         condition: service_healthy
@@ -136,10 +138,13 @@ services:
       DB_HOST: ac-database
       DB_PORT: 3306
       DB_NAME: acore_auth
-      DB_USER: root
-      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      DB_USER: ${WEBSITE_DB_USER:-website}
+      DB_PASSWORD: ${WEBSITE_DB_PASSWORD:-change_this_website_password}
+      JWT_SECRET: ${JWT_SECRET:-change_this_jwt_secret_to_at_least_32_bytes}
+      JWT_ISSUER: ${JWT_ISSUER:-azerothcore-website}
+      JWT_AUDIENCE: ${JWT_AUDIENCE:-azerothcore-client}
     ports:
-      - "${WEBSITE_PORT:-8080}:80"
+      - "${WEBSITE_PORT:-9090}:80"
 
 volumes:
   ac-database:

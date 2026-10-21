@@ -356,12 +356,31 @@ http://127.0.0.1:9090
 
 La web usa `ac-database` como hostname interno. No cambies ese valor por `127.0.0.1`: dentro del contenedor web, `127.0.0.1` apunta al propio contenedor.
 
-Reconstruye la imagen después de cambiar PHP o Nginx:
+La interfaz React se sirve compilada por Nginx en `http://127.0.0.1:9090`. Para desarrollo con Vite, ejecuta desde `website`:
 
-```bash
-docker compose build ac-website
-docker compose up -d ac-website
+```powershell
+npm install
+npm run dev
 ```
+
+Vite usa `http://127.0.0.1:4000` y redirige `/api` hacia `http://127.0.0.1:9090`. El frontend y la API incluyen validación de entrada, consultas preparadas en la capa de datos, headers de seguridad y protección CSRF; el registro permanece deshabilitado hasta implementar SRP6 compatible con la revisión exacta.
+
+Reconstruye la imagen después de cambiar PHP, React o Nginx:
+
+```powershell
+docker compose build ac-website
+docker compose up -d --force-recreate ac-website
+```
+
+Para desarrollar React con Vite en el puerto `4000`:
+
+```powershell
+cd .\website
+npm install
+npm run dev
+```
+
+La API y el frontend compilado permanecen en `http://127.0.0.1:9090`.
 
 ### SRP6
 

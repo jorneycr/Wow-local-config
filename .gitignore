@@ -29,3 +29,6 @@ bin/
 obj/
 CMakeFiles/
 CMakeCache.txt
+
+# Backups locales de bases de datos
+Backup/
