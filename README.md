@@ -4,6 +4,8 @@ Entorno local para AzerothCore/WotLK 3.3.5a, build 12340, con MariaDB, authserve
 
 > Este proyecto está pensado para desarrollo local. No expongas los puertos del servidor a Internet sin configurar correctamente firewall, autenticación y red.
 
+Para desplegar en un VPS y planificar el paso gradual de PHP a Django, consulta [README-servidor-online.md](README-servidor-online.md). Hetzner Cloud puede ejecutar ambos lenguajes con Docker Compose; se requiere una configuración de producción distinta de este Compose local.
+
 ## Estructura
 
 ```text

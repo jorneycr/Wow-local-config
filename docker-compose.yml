@@ -124,6 +124,28 @@ services:
       ac-db-import:
         condition: service_completed_successfully
 
+  ac-backend-django:
+    build:
+      context: ./backend
+    container_name: ac-backend-django
+    restart: unless-stopped
+    networks:
+      - ac-network
+    environment:
+      DB_HOST: ac-database
+      DB_PORT: 3306
+      DB_USER: ${WEBSITE_DB_USER:-website}
+      DB_PASSWORD: ${WEBSITE_DB_PASSWORD:-change_this_website_password}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-change_this_django_secret}
+      JWT_SECRET: ${JWT_SECRET:-change_this_jwt_secret_to_at_least_32_bytes}
+      JWT_ISSUER: ${JWT_ISSUER:-azerothcore-django}
+      JWT_AUDIENCE: ${JWT_AUDIENCE:-azerothcore-client}
+    ports:
+      - "9100:8000"
+    depends_on:
+      ac-database:
+        condition: service_healthy
+
   ac-website:
     build:
       context: ./website
