@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.jest-dist/
+coverage/
+.nyc_output/
+*.log
+.env
+.env.*
+!.env.example

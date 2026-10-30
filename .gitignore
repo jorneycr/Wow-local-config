@@ -29,6 +29,9 @@ bin/
 obj/
 CMakeFiles/
 CMakeCache.txt
+backend-nest/node_modules/
+backend-nest/dist/
+backend-nest/.jest-dist/
 
 # Backups locales de bases de datos
 Backup/
